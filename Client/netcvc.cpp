@@ -48,14 +48,14 @@ int main(int argc, char** argv)
     /* print the width and height of the frame, needed by the client */
     cout << "n--> Transferring  (" << img0.cols << "x" << img0.rows << ")  images to the:  " << server_ip << ":" << server_port << endl;
     //namedWindow("stream_client", CV_WINDOW_AUTOSIZE);
-    flip(img0, img0, 1);
+    //flip(img0, img0, 1);
     cvtColor(img0, img1, CV_BGR2GRAY);
     while(key != 'q') {
         /* get a frame from camera */
         capture >> img0;
         if (img0.empty()) break;
         pthread_mutex_lock(&mutex);
-        flip(img0, img0, 1);
+        //flip(img0, img0, 1);
         cvtColor(img0, img1, CV_BGR2GRAY);
         is_data_ready = 1;
         pthread_mutex_unlock(&mutex);
