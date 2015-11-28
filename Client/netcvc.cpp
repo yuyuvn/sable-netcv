@@ -39,7 +39,7 @@ int main(int argc, char** argv)
     server_ip   = argv[1];
     server_port = atoi(argv[2]);
     capture >> img0;
-    img1 = Mat::zeros(img0.rows, img0.cols ,CV_8UC1);
+    //img1 = Mat::zeros(img0.rows, img0.cols ,CV_8UC1);
     // run the streaming client as a separate thread
     if (pthread_create(&thread_c, NULL, streamClient, NULL)) {
         quit("n--> pthread_create failed.", 1);
@@ -48,15 +48,15 @@ int main(int argc, char** argv)
     /* print the width and height of the frame, needed by the client */
     cout << "n--> Transferring  (" << img0.cols << "x" << img0.rows << ")  images to the:  " << server_ip << ":" << server_port << endl;
     //namedWindow("stream_client", CV_WINDOW_AUTOSIZE);
-    flip(img0, img0, 1);
-    cvtColor(img0, img1, CV_BGR2GRAY);
+    //flip(img0, img0, 1);
+    //cvtColor(img0, img1, CV_BGR2GRAY);
     while(key != 'q') {
         /* get a frame from camera */
         capture >> img0;
         if (img0.empty()) break;
         pthread_mutex_lock(&mutex);
-        flip(img0, img0, 1);
-        cvtColor(img0, img1, CV_BGR2GRAY);
+        //flip(img0, img0, 1);
+        //cvtColor(img0, img1, CV_BGR2GRAY);
         is_data_ready = 1;
         pthread_mutex_unlock(&mutex);
         /*also display the video here on client */
@@ -92,9 +92,10 @@ void* streamClient(void* arg)
     if (connect(clientSock, (sockaddr*)&serverAddr, serverAddrLen) < 0) {
         quit("n--> connect() failed.", 1);
     }
-    int  imgSize = img1.total()*img1.elemSize();
+    //int  imgSize = img1.total()*img1.elemSize();
+	int  imgSize = img0.total()*img0.elemSize();
     int  bytes=0;
-    img2 = (img1.reshape(0,1)); // to make it continuous
+    img2 = (img0.reshape(0,1)); // to make it continuous
     /* start sending images */
     while(1)
     {
@@ -143,9 +144,9 @@ void quit(string msg, int retval)
     if (!(img0.empty())){
         (~img0);
     }
-    if (!(img1.empty())){
+    /*if (!(img1.empty())){
         (~img1);
-    }
+    }*/
     if (!(img2.empty())){
         (~img2);
     }

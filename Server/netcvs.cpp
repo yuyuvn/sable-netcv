@@ -29,7 +29,7 @@ int main(int argc, char** argv)
         quit("Usage: netcv_server <listen_port> ", 0);
     }
     listenPort = atoi(argv[1]);
-    img = Mat::zeros( height,width, CV_8UC1);
+    img = Mat::zeros( height,width, CV_8UC3);
     /* run the streaming server as a separate thread */
     if (pthread_create(&thread_s, NULL, streamServer, NULL)) {
         quit("pthread_create failed.", 1);
@@ -97,9 +97,12 @@ void* streamServer(void* arg)
             }
             /* convert the received data to OpenCV's Mat format, thread safe */
             pthread_mutex_lock(&mutex);
+			int ptr=0;
             for (int i = 0;  i < img.rows; i++) {
                 for (int j = 0; j < img.cols; j++) {
-                    (img.row(i)).col(j) = (uchar)sockData[((img.cols)*i)+j];
+                    //(img.row(i)).col(j) = (uchar)sockData[((img.cols)*i)+j];
+					img.at<cv::Vec3b>(i,j) = cv::Vec3b(sockData[ptr+ 0],sockData[ptr+1],sockData[ptr+2]);
+					ptr=ptr+3;
                 }
             }
             is_data_ready = 1;
