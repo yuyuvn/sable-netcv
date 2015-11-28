@@ -83,7 +83,7 @@ void* streamClient(void* arg)
     /* make this thread cancellable using pthread_cancel() */
     pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-    if ((clientSock = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
+    if ((clientSock = socket(PF_INET, SOCK_DGRAM, 0)) < 0) {
         quit("n--> socket() failed.", 1);
     }
     serverAddr.sin_family = PF_INET;
@@ -101,22 +101,23 @@ void* streamClient(void* arg)
         /* send the grayscaled frame, thread safe */
         if (is_data_ready) {
             pthread_mutex_lock(&mutex);
-            if ((bytes = send(clientSock, img2.data, imgSize, 0)) < 0){
+            /*if ((bytes = send(clientSock, img2.data, imgSize, 0)) < 0){
                 cerr << "n--> bytes = " << bytes << endl;
                 quit("n--> send() failed", 1);
-            }
+            }*/
+			send(clientSock, img2.data, imgSize, 0);
             is_data_ready = 0;
             pthread_mutex_unlock(&mutex);
             memset(&serverAddr, 0x0, serverAddrLen);
         }
         /* if something went wrong, restart the connection */
-        if (bytes != imgSize) {
+        /*if (bytes != imgSize) {
             cerr << "n-->  Connection closed (bytes != imgSize)" << endl;
             close(clientSock);
             if (connect(clientSock, (sockaddr*) &serverAddr, serverAddrLen) == -1) {
                 quit("n--> connect() failed", 1);
             }
-        }
+        }*/
         /* have we terminated yet? */
         pthread_testcancel();
         /* no, take a rest for a while */

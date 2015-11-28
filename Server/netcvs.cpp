@@ -63,7 +63,7 @@ void* streamServer(void* arg)
     /* make this thread cancellable using pthread_cancel() */
     pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-    if ((listenSock = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
+    if ((listenSock = socket(PF_INET, SOCK_DGRAM, 0)) < 0) {
         quit("socket() failed.", 1);
     }
     serverAddr.sin_family = PF_INET;
@@ -72,9 +72,9 @@ void* streamServer(void* arg)
     if (bind(listenSock, (sockaddr*)&serverAddr, sizeof(serverAddr)) == -1) {
         quit("bind() failed", 1);
     }
-    if (listen(listenSock, 5) == -1) {
+    /*if (listen(listenSock, 5) == -1) {
         quit("listen() failed.", 1);
-    }
+    }*/
     int  imgSize = img.total()*img.elemSize();
     char sockData[imgSize];
     int  bytes=0;
@@ -83,15 +83,16 @@ void* streamServer(void* arg)
     {
         cout << "-->Waiting for TCP connection on port " << listenPort << " ...nn";
         /* accept a request from a client */
-        if ((connectSock = accept(listenSock, (sockaddr*)&clientAddr, &clientAddrLen)) == -1) {
+        /*if ((connectSock = accept(listenSock, (sockaddr*)&clientAddr, &clientAddrLen)) == -1) {
             quit("accept() failed", 1);
             }else{
             cout << "-->Receiving image from " << inet_ntoa(clientAddr.sin_addr) << ":" << ntohs(clientAddr.sin_port) << "..." << endl;
-        }
+        }*/
         memset(sockData, 0x0, sizeof(sockData));
         while(1){
+			// TODO: change this for to 1 recv and split data manual
             for (int i = 0; i < imgSize; i += bytes) {
-                if ((bytes = recv(connectSock, sockData +i, imgSize  - i, 0)) == -1) {
+                if ((bytes = recv(listenSock, sockData +i, imgSize  - i, 0)) == -1) {
                     quit("recv failed", 1);
                 }
             }
@@ -123,12 +124,12 @@ void quit(string msg, int retval)
 	} else {
         cerr << (msg == "NULL" ? "" : msg) << "n" <<endl;
     }
-    if (listenSock){
+    /*if (listenSock){
         close(listenSock);
     }
     if (connectSock){
         close(connectSock);
-    }
+    }*/
     if (!img.empty()){
         (img.release());
     }
