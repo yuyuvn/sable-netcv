@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+project( netcvs )
+find_package( OpenCV REQUIRED )
+add_executable( netcvs netcvs.cpp )
+target_link_libraries( netcvs ${OpenCV_LIBS} )
