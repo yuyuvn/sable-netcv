@@ -22,7 +22,6 @@ https://launchpad.net/~mc3man/+archive/ubuntu/trusty-media
 * ~~Crop and tranform webcame resolution to 320x240~~
 * ~~Change tcp to udp~~
 
-* May change to ffmpeg lib instead of opencv
  
 ## Update:
 Use ffmpeg (client use C++ for dangerous)
