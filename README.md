@@ -31,12 +31,14 @@ Command line example:
 Client:
 
 ```ffmpeg -f v4l2 -i "/dev/video0" -r 50 -vcodec mpeg2video -b:v 1000k -f mpegts tcp://127.0.0.1:12345```
+
 ```ffmpeg -f v4l2 -i "/dev/video0" -r 50 -vcodec mpeg2video -b:v 1000k -f rtsp -rtsp_transport tcp rtsp://0.0.0.0:12345/live.sdp```
 
 
 Server:
 
 ```ffplay tcp://0.0.0.0:12345?listen -analyzeduration 500```
+
 ```ffplay -rtsp_flags listen rtsp://localhost:8888/live.sdp?tcp```
 
 ### TODO:
